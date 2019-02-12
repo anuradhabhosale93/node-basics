@@ -1,0 +1,135 @@
+{
+    "openapi": "3.0.0",
+    "servers": [{
+        "url": "https://d2bfn6o2ang24d.cloudfront.net"
+    }],
+    "info": {
+        "description": "Authentication APIs",
+        "title": "SignUp/Login APIs",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/auth/signup": {
+            "post": {
+                "tags": [
+                    "SignUp API"
+                ],
+                "description": "SignUp user to the system.",
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/signup"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/signup"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operation successful."
+                    },
+                    "422": {
+                        "description": "Data validation's related issues."
+                    },
+                    "400": {
+                        "description": "Security or API related isuues."
+                    }
+                }
+            }
+        },
+        "/api/auth/signin": {
+            "post": {
+                "tags": [
+                    "Login API"
+                ],
+                "description": "Login user to the system.",
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/login"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/login"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operation successful."
+                    },
+                    "422": {
+                        "description": "Data validation's related issues."
+                    },
+                    "400": {
+                        "description": "Security or API related isuues."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "login": {
+                "type": "object",
+                "properties": {
+                    "usernameOrEmail": {
+                        "type": "string",
+                        "description": "Enter usernameOrEmail.",
+                        "required": true
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Enter password.",
+                        "required": true
+                    }
+                }
+            },
+            "signup": {
+                "type": "object",
+                "properties": {
+                    "firstName": {
+                        "type": "string",
+                        "description": "Enter first name.",
+                        "required": true
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "description": "Enter last name.",
+                        "required": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "Enter email.",
+                        "required": true
+                    },
+                    "username": {
+                        "type": "string",
+                        "description": "Enter username.",
+                        "required": true
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Enter password.",
+                        "required": true
+                    }
+                }
+            }
+        },
+        "requestBodies": {
+            "content": {
+                "application/json": {
+                    "type": "array"
+                }
+            }
+        }
+    }
+}
