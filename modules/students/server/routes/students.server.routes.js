@@ -3,8 +3,7 @@
 /**
  * Module dependencies
  */
-var studentsPolicy = require('../policies/students.server.policy'),
-  students = require('../controllers/students.server.controller');
+var students = require('../controllers/students.server.controller');
 
 module.exports = function(app) {
   // Students Routes

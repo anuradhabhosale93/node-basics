@@ -12,30 +12,25 @@ var path = require('path'),
 /**
  * Create a Student
  */
-exports.create = function(req, res) {
-  var student = new Student(req.body);
-  student.user = req.user;
+exports.create = async (req, res)=>{
+  try{
+      var student = new Student(req.body);
+      student.user = req.user;
+      var data= await student.save();
+      res.jsonp(data);
+  }
+  catch(e){
+      res.jsonp(e);
+  }
 
-  student.save(function(err) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(student);
-    }
-  });
 };
 
 /**
  * Show the current Student
  */
-exports.read = function(req, res) {
-  // convert mongoose document to JSON
+exports.read = function(req, res){
+  
   var student = req.student ? req.student.toJSON() : {};
-
-  // Add a custom field to the Article, for determining if the current User is the "owner".
-  // NOTE: This field is NOT persisted to the database, since it doesn't exist in the Article model.
   student.isCurrentUserOwner = req.user && student.user && student.user._id.toString() === req.user._id.toString();
 
   res.jsonp(student);
@@ -44,115 +39,47 @@ exports.read = function(req, res) {
 /**
  * Update a Student
  */
-exports.update = function(req, res) {
-  var student = req.student;
+exports.update = async (req, res)=>{
+   try{
+       var student = req.student;
+       student = _.extend(student, req.body);
+        student.save();
+        res.jsonp({message:"updated"});
+   }
+  catch(e){
+      res.jsonp(e);
+  }
 
-  student = _.extend(student, req.body);
 
-  student.save(function(err) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(student);
-    }
-  });
 };
 
 /**
- * Delete an Student
- */
-exports.delete = function(req, res) {
+ * Delete an Student*/
+ 
+exports.delete = async (req, res)=>{
   var student = req.student;
-
-  student.remove(function(err) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(student);
-    }
-  });
+  try{
+     student.remove();
+    res.jsonp({message:'deleted successfully'});
+  }
+  catch(e){
+      res.jsonp(e);
+  }
 };
 
 /**
  * List of Students*/
 
-exports.list = function(req, res) {
-  Student.find().sort('-created').populate('user', 'displayName').exec(function(err, students) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(students);
-    }
-  });
-};
-
-
-/*  $match for where clause 
-
-exports.list = function(req, res) {
-Student.aggregate([{$match:{marks:{$gte:50,$lt:90}}}]).exec(function(err,students)
-{
-  if (err) {
-    return res.status(400).send({
-      message: errorHandler.getErrorMessage(err)
-    });
-  } else {
-    res.jsonp(students);
+exports.list = async (req, res)=>{
+  try{
+  var data=await Student.find().sort('-created').populate('user', 'displayName').exec();
+  res.jsonp(data);   
   }
-});
+  catch(e){
+      res.jsonp(e);
+  }
+
 };
-*/
-
-/* $count
-
-exports.list = function(req, res) {
-  Student.aggregate([{$match:{marks:85}},{$count:"total"}]).exec(function(err,students)
-  {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(students);
-    }
-  });
-  };
-*/
-
-/*
-exports.list = function(req, res) {
-  Student.find(Student.aggregate([{$match:{marks:85}}])).populate('user', 'displayName').exec(function(err, students) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(students);
-    }
-  });
-  };
-  
-  */ 
-
-  /*  min max 
-exports.list = function(req, res) {
-  Student.find(Student.aggregate([{$min:70}])).populate('user', 'displayName').exec(function(err, students) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(students);
-    }
-  });
-  };
-  */
   
 /**
  * Student middleware
