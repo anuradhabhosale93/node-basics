@@ -43,8 +43,8 @@ exports.update = async (req, res)=>{
    try{
        var student = req.student;
        student = _.extend(student, req.body);
-        student.save();
-        res.jsonp({message:"updated"});
+        const result = await student.save();
+        res.jsonp(result);
    }
   catch(e){
       res.jsonp(e);
@@ -59,8 +59,8 @@ exports.update = async (req, res)=>{
 exports.delete = async (req, res)=>{
   var student = req.student;
   try{
-     student.remove();
-    res.jsonp({message:'deleted successfully'});
+     const deletedata = await student.remove();
+    res.jsonp(deletedata);
   }
   catch(e){
       res.jsonp(e);
@@ -72,7 +72,7 @@ exports.delete = async (req, res)=>{
 
 exports.list = async (req, res)=>{
   try{
-  var data=await Student.find().sort('-created').populate('user', 'displayName').exec();
+  var data = await Student.find().sort('-created').populate('user', 'displayName').exec();
   res.jsonp(data);   
   }
   catch(e){
