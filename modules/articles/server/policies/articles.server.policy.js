@@ -87,7 +87,7 @@ exports.isAllowed = function (req, res, next)
           else{
             if(isAllowed)
             {
-              return next();
+              //return next();
             }
             else{
               return res.status(403).json({

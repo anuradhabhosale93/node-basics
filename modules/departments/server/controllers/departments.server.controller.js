@@ -94,18 +94,6 @@ exports.list = function(req, res)
         res.jsonp(departments);
       }
   });
-
-  /*
-  Department.find().sort('-created').populate('user', 'displayName').exec(function(err, departments) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(departments);
-    }
-  });
-  */
 };
 
 /**
