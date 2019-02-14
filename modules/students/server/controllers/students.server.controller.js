@@ -14,10 +14,10 @@ var path = require('path'),
  */
 exports.create = async (req, res)=>{
   try{
-      var student = new Student(req.body);
+      const student = new Student(req.body);
       student.user = req.user;
-      var data= await student.save();
-      res.jsonp(data);
+      const result= await student.save();
+      res.jsonp(result);
   }
   catch(e){
       res.jsonp(e);
@@ -30,7 +30,7 @@ exports.create = async (req, res)=>{
  */
 exports.read = function(req, res){
   
-  var student = req.student ? req.student.toJSON() : {};
+  const student = req.student ? req.student.toJSON() : {};
   student.isCurrentUserOwner = req.user && student.user && student.user._id.toString() === req.user._id.toString();
 
   res.jsonp(student);
@@ -49,17 +49,14 @@ exports.update = async (req, res)=>{
   catch(e){
       res.jsonp(e);
   }
-
-
 };
 
 /**
  * Delete an Student*/
  
 exports.delete = async (req, res)=>{
-  var student = req.student;
   try{
-     const deletedata = await student.remove();
+     const deletedata = await req.student.remove();
     res.jsonp(deletedata);
   }
   catch(e){
@@ -72,8 +69,9 @@ exports.delete = async (req, res)=>{
 
 exports.list = async (req, res)=>{
   try{
-  var data = await Student.find().sort('-created').populate('user', 'displayName').exec();
-  res.jsonp(data);   
+    
+  const result = await Student.find().exec();
+  res.jsonp(result);   
   }
   catch(e){
       res.jsonp(e);
@@ -84,23 +82,21 @@ exports.list = async (req, res)=>{
 /**
  * Student middleware
  */
-exports.studentByID = function(req, res, next, id) {
+exports.studentByID = async (req, res, next, id) =>{
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).send({
-      message: 'Student is invalid'
+  try
+  {
+    if (!mongoose.Types.ObjectId.isValid(id)) 
+    {
+      return res.status(400).send({
+       message: 'Student is invalid'
     });
   }
-
-  Student.findById(id).populate('user', 'displayName').exec(function (err, student) {
-    if (err) {
-      return next(err);
-    } else if (!student) {
-      return res.status(404).send({
-        message: 'No Student with that identifier has been found'
-      });
-    }
-    req.student = student;
-    next();
-  });
+    req.student= await Student.findById(id).exec();
+      next();
+  }
+  catch(e)
+  {
+    res.jsonp(e);
+  }
 };
